@@ -14,6 +14,7 @@ import Pagination from "~/components/Table/Pagination";
 import { mapGetters, mapActions } from "vuex";
 export default {
   components: { TopPanel, Pagination },
+  middleware: "table-current-page",
   created() {
     this.fetchPhones();
   },
