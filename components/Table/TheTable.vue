@@ -74,11 +74,22 @@ export default {
   computed: {
     ...mapGetters("main", ["getCurrentPage", "getSearchStr", "getLoading"]),
     getPhones() {
-      return this.getSearchStr === ""
-        ? this.$store.getters["main/getPhones"](this.getCurrentPage)
-        : this.$store.getters["main/getPhones"](this.getCurrentPage).filter(
-            record => record.number.search(this.getSearchStr) >= 1
-          );
+      if (this.getSearchStr !== "") {
+        let reg = new RegExp(this.getSearchStr.replace(/[^\d]/gi, ""), "gi");
+        return this.$store.getters["main/getPhones"](this.getCurrentPage)
+          .map(record => {
+            const match = record.number.replace(/[^\d]/gi, "").match(reg);
+            if (!match) {
+              return null;
+            }
+            return {
+              ...record
+            };
+          })
+          .filter(record => !!record);
+      } else {
+        return this.$store.getters["main/getPhones"](this.getCurrentPage);
+      }
     }
   },
   data() {
